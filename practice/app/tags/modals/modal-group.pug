@@ -1,0 +1,49 @@
+modal-group(spat-animation='bottom')
+  div.f.flex-column.bg-white.h-full(ref='modal')
+    module-header(title='グループ作成')
+    div.container
+      form.px50.py32.text-center(onsubmit='{submit}')
+        img.s128.circle.object-fit-cover.mb16(src='{data.image}')
+        input.border.p8.rounded-4.w-full.mb32(ref='title', placeholder='グループ名', required)
+        button.button.primary 作成
+    div.homebar.bg-white.flex-fixed
+    
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('mount', () => {
+      var image = _.shuffle(app.utils.getDummyImages())[0];
+      this.data = {
+        title: '',
+        image: image,
+      };
+      this.update();
+    });
+
+    this.submit = async (e) => {
+      e.preventDefault();
+
+      var uid = firebase.auth().getUid();
+      var user_ref = app.store.users.getReference();
+
+      var data = {
+        title: this.refs.title.value,
+        image: this.data.image,
+        user_id: uid,
+        user_ref: user_ref,
+        created_at: Date.now(),
+        updated_at: Date.now(),
+        users: [
+          user_ref,
+        ],
+      };
+
+      var ref = await flarebase.store.db.collection('groups').add(data);
+      
+      app.routeful.go(`/groups/${ref.id}`);
+
+      this.close();
+    };

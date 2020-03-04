@@ -1,0 +1,21 @@
+atom-loading
+  div.s50.indicator
+    img(src='/static/images/indicator.svg')
+
+  style(scoped, type='less').
+    :scope {
+      display: block;
+      
+      .indicator {
+        animation: loading 1s infinite linear;
+      }
+
+      @keyframes loading {
+        0%{
+          transform: rotate(0deg);
+        }
+        100%{
+          transform: rotate(360deg);
+        }
+      }
+    }

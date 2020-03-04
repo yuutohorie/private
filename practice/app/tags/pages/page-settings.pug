@@ -1,0 +1,36 @@
+page-settings
+  div.flex.flex-column.h-full
+    module-header
+    div.h-full.overflow-scroll
+      div.container.my16
+        a.f.bg-white.p16.mb1(each='{item in items}', href='{item.link}', onclick='{item.onclick}' , target='_blank')
+          div {item.label}
+    module-tabbar
+
+  script.
+
+    this.items = [
+      { label: 'ログイン・登録', onclick: () => { app.utils.openAuthModal(); } },
+      { label: 'Spalate を応援する', link: 'https://github.com/phi-jp/spalate/' },
+      { label: '不具合を報告する', link: 'https://github.com/phi-jp/spalate/issues' },
+      { label: 'ログアウト', link: '/', onclick: (e) => this.logout(e) },
+      { label: 'リロード', link: '/', onclick: (e) => this.reload(e) },
+      { label: '利用規約' },
+    ];
+
+    this.on('mount', () => {
+    });
+    
+    this.on('show', function() {
+    });
+
+    this.logout = (e) => {
+      e.preventDefault();
+      app.ref.auth.logout();
+      location.reload();
+    };
+
+    this.reload = (e) => {
+      e.preventDefault();
+      location.reload();
+    };

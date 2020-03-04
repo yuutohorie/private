@@ -1,0 +1,29 @@
+modal-markdown(spat-animation='bottom')
+  div.s-full.f.flex-column.bg-white(ref='modal')
+    module-header.flex-fixed(title='{title}', close='{close}')
+    div.s-full.container.px16.py32.overflow-scroll
+      div.markdown(data-is='atom-markdown', content='{text}', sanitize='{false}', imageviewer='{true}')
+
+  style(scoped, type='less').
+    :scope {
+      display: block;
+
+      .markdown {
+        h1, h2, h3, h4, p, ul, ol, table {
+          margin-bottom: 1.0rem;
+        }
+      }
+    }
+
+  script.
+    this.on('mount', async (e) => {
+      var res = await fetch(this.opts.filename);
+      var text = await res.text();
+      var lines = text.trim().split('\n');
+      var title = lines.shift().trim();
+
+      this.title = title.replace(/^#/, '').trim();
+      this.text = lines.join('\n');
+
+      this.update();
+    });

@@ -1,0 +1,129 @@
+modal-imageviewer(spat-animation='scale')
+  div.relative.s-full.overflow-hidden.f.fh(ref='modal')
+    img.object-fit-contain(ref='image', src='{opts.image}', show='{initialized}', ondragstart='{stop}', class='{transition: transition}')
+    div.text-white.material-icons.absolute.p6.t5.l5.fs24.transition.circle(ref='close', onclick='{close}', class='{"opacity-0 pointer-none": hideUI}') close
+
+  style(type='less').
+    :scope {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+  script.
+    this.on('mount', () => {
+      var x = 0;
+      var y = 0;
+      var s = 1;
+      var prevX = 0;
+      var prevY = 0;
+      var lastScale = s;
+      var MAX_SCALE = 5;
+      this.hammer = new Hammer(this.refs.modal);
+      //- ピンチと移動を有効にする
+      this.hammer.get('pinch').set({enable: true});
+      this.hammer.get('pan').set({enable: true, threshold: 1 });
+      //- 画像の初期設定
+      if (this.refs.image.complete) {
+        this.setupSize();
+      }
+      else {
+        this.refs.image.onload = () => {
+          this.setupSize();
+          this.refs.image.onload = null;
+        };
+      }
+      this.hammer.on('tap doubletap pan panend pinch pinchend', e => {
+        if (e.type === 'tap') {
+          if (e.target === this.refs.close) return ;
+          this.hideUI = !this.hideUI;
+          this.update();
+          return ;
+        }
+        this.transition = false;
+        var elm = this.refs.image;
+        var rect = elm.getBoundingClientRect();
+        //- 移動用の関数
+        var move = () => {
+          x += e.deltaX - prevX;
+          y += e.deltaY - prevY;
+          prevX = e.deltaX;
+          prevY = e.deltaY;
+        };
+        //- 拡大縮小、座標の調整をする関数
+        var fixPosition = () => {
+          //- 拡大によってはみ出た分
+          var overflowX = Math.max(0, rect.width - innerWidth) / 2;
+          var overflowY = Math.max(0, rect.height - innerHeight) / 2;
+          x = Math.max(Math.min(overflowX, x + e.velocityX * 256), - overflowX);
+          y = Math.max(Math.min(overflowY, y + e.velocityY * 256), - overflowY);
+          s = Math.min(Math.max(1, s), MAX_SCALE);
+          //- スケール1は強制的に真ん中へ
+          if (s === 1) {
+            x = y = 0;
+          }
+        };
+        //- ダブルタップ時
+        if (e.type === 'doubletap') {
+          this.transition = true;
+          //- スケール2以上ならスケール1にする
+          if (lastScale >= 2) {
+            s = lastScale = 1;
+            fixPosition();
+          }
+          else {
+            //- スケール2まで拡大
+            s = lastScale = 2;
+          }
+        }
+        //- ピンチ
+        else if (e.type === 'pinch') {
+          s = lastScale * e.scale;
+          move();
+        }
+        //- 移動
+        else if (e.type === 'pan') {
+          move();
+        }
+        //- ピンチ終了時
+        else if (e.type === 'pinchend') {
+          this.transition = true;
+          fixPosition();
+          lastScale = s;
+          prevX = 0;
+          prevY = 0;
+          this.hammer.stop();
+        }
+        //- 移動終了時
+        else if (e.type === 'panend') {
+          this.transition = true;
+          prevY = prevX = 0;
+          fixPosition();
+        }
+        this.update();
+        elm.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+      });
+    });
+
+    this.on('unmount', () => {
+      this.hammer.destroy();
+    });
+
+    this.setupSize = () => {
+      var img = this.refs.image;
+      var widthRate = img.naturalWidth / innerWidth;
+      var heightRate = img.naturalHeight / innerHeight;
+      //- 横長
+      if (widthRate >= heightRate) {
+        img.style.width = '100%';
+      }
+      //- 縦長
+      else {
+        img.style.height = '100%';
+      }
+      this.initialized = true;
+      this.update();
+    };
+
+    this.stop = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+    };

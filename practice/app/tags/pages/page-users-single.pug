@@ -1,0 +1,53 @@
+page-users-single(spat-animation="{is_mypage ? '' : 'slide'}")
+  div.flex.flex-column.h-full
+    div.statusbar.bg-white.flex-fixed
+    div.h-full.overflow-scroll
+      //- header
+      div.bg-primary.h32vh.relative
+      div.container
+        div.px32.mtn40.relative
+          div.f.fh.mb16
+            img.object-fit-cover.circle.s80.bg-white.border.border-white.border-width-4.box-shadow(src='{user.data.image}')
+          div.text-center.bold.mb16 {user.data.display_name || user.data.screen_name}
+          p.mb32 {user.data.profile}
+          div.f.fh
+            button.button.primary(if='{is_me}', onclick='{editProfile}') プロフィール編集
+
+    module-tabbar
+
+  style(type='less').
+    :scope {
+      display: block;
+      .mtn40 {
+        margin-top: -40px;
+      }
+    }
+
+  script.
+    
+    this.on('show', async (e) => {
+      if (e.opts.screen_name) {
+        this.is_mypage = false;
+        this.update();
+        this.user = await app.store.users.getByScreenName(e.opts.screen_name);
+      }
+      else {
+        this.is_mypage = true;
+        this.update();
+        this.user = await app.store.users.get();
+      }
+
+      var uid = firebase.auth().getUid();
+      if (this.user.id === uid) {
+        this.is_me = true;
+      }
+
+      this.update();
+
+      //- var base64 = await app.utils.imageToBase64(faker.image.image());
+      //- firebase.storage().ref('hoge/foo').child('test').putString(image, 'base64', {contentType:'image/jpg'});
+    });
+
+    this.editProfile = () => {
+      spat.modal.open('modal-user');
+    };
