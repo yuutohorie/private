@@ -1,0 +1,118 @@
+spalate:
+  # ssr: true
+  views:
+    default: app/views/default.pug
+  static:
+    public: /static
+  # フロント/サーバー両方で使うコード
+  modules:
+    target:
+      - router: './app/assets/scripts/router.js'
+      - Routeful: routeful
+      - helmeta
+      - Firerest: firerest
+      - QuerySearch: querysearch
+      - _: underscore
+      - app: 'public/scripts/app.js'
+    output: 'public/scripts/modules.js'
+  riot:
+    target: 'app/tags'
+    output: 'public/scripts/tags.js'
+    options:
+      template: 'pug'
+  style:
+    type: less
+    entry: 'app/assets/styles/main.less'
+    target: 'app/assets/styles/'
+    output: 'public/styles/main.css'
+  iconfont:
+    target: 'public/images/icons'
+    output: 'public/fonts/icons'
+  # logger:
+  #   type: 'dev'
+  plugins:
+  cordova:
+    platforms:
+      - ios
+      - android
+    target: 'test-app'
+    output: 'public/plugins/cordova'
+    
+client:
+  env: default
+  head:
+    title: spalate chat
+    description: Hello, spalate!
+    type: website
+    image: https://chat-rabee-jp.appspot.com/static/images/ogp.png
+    favicon: /static/images/favicon.png
+    url: https://rabee.jp
+    meta:
+      - { name: viewport, content: "width=device-width,height=device-height,user-scalable=no,initial-scale=1,maximum-scale=1,viewport-fit=cover" }
+      - { name: apple-mobile-web-app-capable, content: "yes" }
+      - { name: apple-mobile-web-app-status-bar-style, content: "default" }
+      - { name: apple-mobile-web-app-title, content: "spalate" }
+      # ogp
+      - { name: twitter:card, content: "summary_large_image" }
+      # application id for mobile safari banner
+      # - { name: apple-itunes-app, content: "app-id=1480623780" }
+    link:
+      - { rel: "stylesheet", href: "https://fonts.googleapis.com/icon?family=Material+Icons" }
+      - { rel: "stylesheet", href: "https://cdn.jsdelivr.net/gh/phi-jp/meltline@v0.1.10/meltline.css" }
+      - { rel: "stylesheet", href: "/static/fonts/icons/icons.css" }
+      - { rel: "stylesheet", href: "/static/styles/main.css" }
+    script:
+      # jquery
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js' }
+      # moment.js
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js' }
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ja.js' }
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/2.2.2/moment-duration-format.js' }
+      # marked js
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.17/marked.js' }
+      # faker.js
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js' }
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/locales/ja/faker.ja.js' }
+      # firebase
+      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-app.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-auth.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-firestore.js' }
+      - { src: 'https://www.gstatic.com/firebasejs/5.10.1/firebase-storage.js' }
+      # polyfill
+      - { src: https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver }
+      # hammer
+      - { src: 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js' }
+      # my plugins
+      - { src: 'https://cdn.jsdelivr.net/gh/phi-jp/spat@v0.1.9/spat.js' }
+      - { src: 'https://cdn.jsdelivr.net/gh/phi-jp/uuaa@v0.1.0/uuaa.js' }
+      - { src: 'https://cdn.jsdelivr.net/gh/phi-jp/socialink@v0.0.2/socialink.js' }
+      - { src: 'https://cdn.jsdelivr.net/gh/phi-jp/sclazy@v0.0.2/sclazy.js' }
+      - { src: 'https://cdn.jsdelivr.net/gh/phi-jp/vercom@v0.0.2/vercom.js' }
+      - { src: 'https://cdn.jsdelivr.net/gh/phi-jp/flickable@v0.0.5/flickable.js' }
+      # node modules
+      - { src: '/static/scripts/modules.js' }
+
+      # user
+      - { src: "/static/scripts/flarebase.js" }
+      - { src: "/static/scripts/storage.js" }
+      - { src: "/static/scripts/tags.js" }
+      - { src: "/static/scripts/utils.js" }
+      - { src: "/static/scripts/store.js" }
+      - { src: "/static/scripts/main.js" }
+  firerest:
+    endpoint: https://jsonplaceholder.typicode.com
+    cacheKey: rabeechat.auth.token
+    tokenKey: Authorization
+    debug: true
+  firebase:
+    apiKey: "AIzaSyCiJjzLD4C5ueJ2wP3UVmdTa7BfiqnWu5Q"
+    authDomain: "chat-rabee-jp.firebaseapp.com"
+    databaseURL: "https://chat-rabee-jp.firebaseio.com"
+    projectId: "chat-rabee-jp"
+    storageBucket: "chat-rabee-jp.appspot.com"
+    messagingSenderId: "50741122756"
+  app:
+    ios:
+      version: '2.0.0'
+      url: 'https://google.com'

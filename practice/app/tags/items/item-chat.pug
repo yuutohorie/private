@@ -1,0 +1,15 @@
+item-chat
+  a.f.bg-white.rounded-3.p16.box-shadow(href='/groups/{opts.item.id}')
+    div.flex-fixed.mr8
+      div.w128.s-w80.rect
+        img.block.s-full.object-fit-cover.border(src='{opts.item.data.image}')
+    div.w-full
+      div.f.fm.flex-between.mb8
+        h3.lh14.line-clamp-1.fs14 {opts.item.data.title}
+        time.fs10 {moment(opts.item.data.updated_at).fromNow()}
+      p.line-clamp-3.word-break-all.fs12.text-gray {opts.item.data.last_message.data.body}
+
+  style(type='less').
+    :scope {
+      display: block;
+    }

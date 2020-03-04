@@ -1,0 +1,35 @@
+modal-user(spat-animation='bottom')
+  div.f.flex-column.bg-white.h-full(ref='modal')
+    module-header(title='プロフィール編集')
+    div.container
+      form.px50.py32.text-center(onsubmit='{submit}')
+        img.s128.circle.object-fit-cover.mb16(src='{user.data.image}')
+        input.border.p8.rounded-4.w-full.mb32(ref='display_name', placeholder='名前', required)
+        button.button.primary 更新
+    div.homebar.bg-white.flex-fixed
+  
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('mount', async () => {
+      this.user = await app.store.users.get();
+      this.refs.display_name.value = this.user.data.display_name || '';
+      this.update();
+    });
+
+    this.submit = async (e) => {
+      e.preventDefault();
+
+      await this.user.doc.ref.update({
+        display_name: this.refs.display_name.value,
+        updated_at: Date.now(),
+      });
+
+      await this.user.doc.ref.getWithRelation({cache:false});
+      riot.update();
+
+      this.close();
+    };

@@ -1,0 +1,68 @@
+page-groups-single(spat-animation='slide')
+  div.flex.flex-column.h-full
+    module-header(back='{true}', title='{item.data.title}')
+    div.h-full.overflow-scroll
+      div.container.p10
+        div.mb16(data-is='item-message', each='{message in messages}', item='{message}')
+    div.w-full.bg-white
+      form.container.p8.f(onsubmit='{send}', action='')
+        input.bg-whitesmoke.w-full.p8.rounded-4.fs13(ref='input', placeholder='Aa')
+    div.homebar.bg-white.flex-fixed
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('show', async (e) => {
+      this.item = await app.store.groups.get(e.opts.id);
+
+      this.messages = [];
+
+      this.observer = await this.item.doc.ref.collection('messages').watch(({change, item, isNew}) => {
+        this.messages.push(item);
+        this.messages.sort((a, b) => {
+          return a.data.created_at - b.data.created_at;
+        });
+
+        this.update();
+      });
+
+      // 所属していなかったら追加する
+      var me_ref = app.store.users.getReference();
+      await this.item.doc.ref.update({
+        users: firebase.firestore.FieldValue.arrayUnion(me_ref)
+      });
+
+      this.update();
+    });
+
+    this.on('hide', () => {
+      this.observer();
+    });
+
+    this.send = async (e) => {
+      e.preventDefault();
+
+      var value = this.refs.input.value;
+      if (!value) return ;
+
+      this.refs.input.value = '';
+
+      var uid = firebase.auth().getUid();
+      var messageRef = await this.item.doc.ref.collection('messages').add({
+        body: value,
+        user_id: uid,
+        user_ref: app.store.users.getReference(),
+        created_at: Date.now(),
+      });
+
+      this.item.doc.ref.update({
+        last_message_id: messageRef.id,
+        last_message_ref: messageRef,
+        updated_at: Date.now(),
+      });
+
+      //- alert(this.refs.input.value);
+    };

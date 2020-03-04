@@ -1,0 +1,64 @@
+atom-markdown
+  style(scoped, type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('mount', () => {
+      this.root.addEventListener('click', (e) => {
+        var target = e.target;
+        // 画像タグの場合
+        if (this.opts.imageviewer) {
+          if (target.nodeName === "IMG") {
+            spat.modal.open('modal-imageviewer', {image: target.src});
+          }
+        }
+
+        // aタグの場合 url は webview で開く
+        if (target.nodeName === "A") {
+          e.preventDefault();
+          e.stopPropagation();
+          var url = target.href;
+          app.utils.webview.open(url);
+        }
+      });
+    });
+
+    this.setContent = (content) => {
+      // 条件１：読み込む順番対策、条件２：無限ループの解消を
+      if (!content) {
+        this.root.innerHTML = '';
+        this.content = null;
+      }
+      else if (this.content != content ) {
+        this.content = content; // 条件２用
+
+        // メンション用
+        if (this.opts.mention) {
+          content = content.replace(/@(\w+)/g, (match) => {
+            return `[${match}](#)`;
+          });
+        }
+
+        this.root.innerHTML = marked(content, {
+          breaks: true,
+          sanitize: (typeof this.opts.sanitize === "boolean") ? this.opts.sanitize : true,
+        });
+        //- this.root.innerHTML = app.mdit.render(content);
+        this.update();
+      }
+    };
+
+    this.on('mount', () => {
+      this.setContent(this.opts.content);
+    });
+
+    this.on('update', () => {
+      this.setContent(this.opts.content);
+    });
+
+    this.openModal = (e) => {
+      e.stopPropagation();
+      spat.modal.open('modal-image-viewer', {src: e.currentTarget.src});
+    };

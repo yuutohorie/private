@@ -1,0 +1,28 @@
+module-tabbar
+  div.h50.border-top.bg-white
+    div.container.s-full.f.fh
+      a.f.s-full.cursor-pointer(each='{tab in tabs}', href='{tab.link}', onclick='{tab.onclick}')
+        div.w-full.f.fh
+          i.material-icons {tab.icon}
+  div.homebar.bg-white
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.on('mount', () => {
+      this.tabs = [
+        { icon: 'home', link: '/' },
+        { icon: 'search', link: '/' },
+        { icon: 'add', onclick: this.openGroupModal },
+        { icon: 'person_outline', link: '/mypage' },
+        { icon: 'settings', link: '/settings' },
+      ];
+      this.update();
+    });
+
+    this.openGroupModal = () => {
+      spat.modal.open('modal-group');
+    };

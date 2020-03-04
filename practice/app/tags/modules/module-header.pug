@@ -1,0 +1,27 @@
+module-header
+  div.statusbar.bg-white
+  div.bg-white.h44.box-shadow.relative
+    div.container.s-full.f.fh.relative
+      div.bold.fs16
+        a.block(href='/') { opts.title || 'chat' }
+      div.absolute.t0.l0.h-full.f.fh.px10.cursor-pointer(if='{opts.back}', onclick='{back}')
+        i.icon-arrow_left.fs28
+      div.absolute.t0.l0.h-full.f.fh.px10.cursor-pointer(if='{opts.close}', onclick='{close}')
+        i.material-icons close
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.on('mount', () => {
+
+    });
+    this.back = () => {
+      typeof this.opts.back === 'function' ? this.opts.back() : spat.nav.back();
+    };
+    this.close = () => {
+      typeof this.opts.close === 'function' ? this.opts.close() : spat.nav.back();
+    };
+    
