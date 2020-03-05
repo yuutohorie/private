@@ -1,0 +1,46 @@
+page-stopwatch
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
+    module-header.w-full(title='STOP WATCH', back='{true}')
+  //- コンテンツ
+  div.flex.flex-column.h90per
+    div.h-full.overflow-scroll(ref='body')
+      div.container.f.fh.flex-column.p30
+        div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
+        div
+          button.button(onclick='{start}') Start
+          button.stop.button(onclick='{stop}') Stop
+          button.reset.button(onclick='{reset}') Reset
+
+  script.
+    this.on('mount', () => {
+    });
+
+    this.countUp = () => {
+      var d = new Date(Date.now() - this.startTime);
+      var m = String(d.getMinutes()).padStart(2, 0);
+      var s = String(d.getSeconds()).padStart(2, 0);
+      var ms = String(d.getMilliseconds()).padStart(3, 0);
+      this.timer = m + ':' + s + ':' + ms;
+      this.update();
+      this.timerId = setTimeout(() => {
+        this.countUp();
+      }, 10);
+    };
+
+    this.start = () => {
+      this.startTime = Date.now();
+      this.countUp();
+    };
+
+    this.stop = () => {
+      clearTimeout(this.timerId);
+      this.timerstop = true;
+    };
+
+    this.reset = () => {
+      if (this.timerstop) {
+        this.timer = false;
+        return;
+      }
+      this.start();
+    };
