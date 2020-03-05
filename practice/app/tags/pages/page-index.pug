@@ -1,12 +1,24 @@
 page-index
-  div.flex.flex-column.h-full
-    module-header
-    div.h-full.overflow-scroll(ref='body')
-      div.container
-        div.posts
-          div.m16(data-is='item-chat', each='{item in sclazy.items}', item='{item}')
+  //- ヘッダー
+  div.sticky.t0.l0.f.fh.h10per.z1.bg-white
+    module-header.w-full(title='TOP')
+  div.h90per.relative.px10
+    //- ヒーロー画像
+    div.h-full
+      img.h-full.object-fit-cover(src="/static/images/top/hero/top_hero1.jpg")
+      div.absolute.l0.b0.w-full.f.fh.flex-column
+        div.fs20.rotate90.text-white.py20 scroll
+        div.material-icons.fs40.rotate90.text-white chevron_right
+    //- リンク
+    div.f.fh.flex-column.h-full
+      div.h-full.overflow-scroll(ref='body')
+        div.container.p30
+          a.contents.f.flex-column.fh.py10(each='{item in contents}', href='{item.link}')
+            div.fs18 {item.title}
+      
+          //- div.m16(data-is='item-chat', each='{item in sclazy.items}', item='{item}')
           //- div.text-center.my16(if='{sclazy.isMore()}') loading...
-    module-tabbar
+    //- module-tabbar
 
   script.
     //- this.fetch = async ({app, modules}) => {
@@ -17,6 +29,33 @@ page-index
     //-     posts: posts.splice(0, 10),
     //-   };
     //- };
+    this.contents = [
+      {
+        title: 'GAMES',
+        link: '/games',
+        image: '',
+      },
+      {
+        title: 'hoge',
+        link: '#',
+        image: '',
+      },
+      {
+        title: 'hoge',
+        link: '#',
+        image: '',
+      },
+      {
+        title: 'hoge',
+        link: '#',
+        image: '',
+      },
+      {
+        title: 'hoge',
+        link: '#',
+        image: '',
+      },
+    ];
 
     this.on('mount', async () => {
       this.sclazy = Sclazy({
