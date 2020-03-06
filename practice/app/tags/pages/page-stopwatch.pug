@@ -1,8 +1,11 @@
 page-stopwatch
   div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
     module-header.w-full(title='STOP WATCH', back='{true}')
+  
   //- コンテンツ
   div.flex.flex-column.h90per
+    div.fs20.text-center.pt30 {opts.difficulty.time}秒ぴったりチャレンジ
+    div.fs20.text-center.pt30 ±{opts.difficulty.seconds}秒以内で成功！
     div.h-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
         div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
@@ -24,15 +27,29 @@ page-stopwatch
       this.reset();
     });
 
+    //- ダミー
+    this.opts.difficulty =
+      {
+        level : "1",
+        time : "10",
+        seconds : "1",
+        setting_time : 10000,
+        border_time : 1000,
+      };
+
     var startTime;
     var timeoutId;
     var elapsedTime = 0;
+    var d;
+    var m;
+    var s;
+    var ms;
 
     this.countUp = () => {
-      var d = new Date(Date.now() - startTime + elapsedTime);
-      var m = String(d.getMinutes()).padStart(2, 0);
-      var s = String(d.getSeconds()).padStart(2, 0);
-      var ms = String(d.getMilliseconds()).padStart(3, 0);
+      d = new Date(Date.now() - startTime + elapsedTime);
+      m = String(d.getMinutes()).padStart(2, 0);
+      s = String(d.getSeconds()).padStart(2, 0);
+      ms = String(d.getMilliseconds()).padStart(3, 0);
       this.timer = `${m}:${s}.${ms}`;
       this.update();
       timeoutId = setTimeout(() => {
@@ -55,9 +72,26 @@ page-stopwatch
       if (!this.measuring) return;
 
       clearTimeout(timeoutId);
+      //- 秒に誤差が出ないようelapsedTimeからthis.timerを書き換え
+      elapsedTime += Date.now() - startTime;
+      var strTimer = String(elapsedTime);
+      s = strTimer.slice(-4, 1).padStart(2, 0);
+      ms = strTimer.slice(-3).padStart(3, 0);
+      this.timer = false;
+      this.timer = `${m}:${s}.${ms}`;
+      //- 状態変更
       this.measuring = false;
       this.stopTimer = true;
-      elapsedTime += Date.now() - startTime;
+      this.update();
+
+      //- クリア判定
+      var check_time = Math.abs(elapsedTime - this.opts.difficulty.setting_time);
+      if (check_time <= this.opts.difficulty.border_time) {
+        this.clear = true;
+        spat.modal.alert("成功！！");
+      } else {
+        spat.modal.alert("残念、失敗");
+      }
     };
 
     this.reset = () => {
