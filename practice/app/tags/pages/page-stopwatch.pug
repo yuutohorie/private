@@ -4,7 +4,7 @@ page-stopwatch
   
   //- コンテンツ
   div.flex.flex-column.h90per
-    div.fs20.text-center.pt30 {opts.difficulty.time}秒ぴったりチャレンジ
+    div.fs20.text-center.pt30 {opts.difficulty.time}秒チャレンジ
     div.fs20.text-center.pt30 ±{opts.difficulty.seconds}秒以内で成功！
     div.h-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
@@ -89,8 +89,11 @@ page-stopwatch
       if (check_time <= this.opts.difficulty.border_time) {
         this.clear = true;
         spat.modal.alert("成功！！");
+
       } else {
-        spat.modal.alert("残念、失敗");
+        this.stop();
+        this.reset();
+        spat.modal.alert("失敗");
       }
     };
 
