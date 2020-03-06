@@ -3,8 +3,9 @@ page-stopwatch
     module-header.w-full(title='STOP WATCH', back='{true}')
   
   //- コンテンツ
-  div.flex.flex-column.h90per
-    div.fs20.text-center.pt30 {opts.difficulty.time}秒チャレンジ
+  div.flex.fh.flex-column.h90per
+    select.fs20.pt30
+      option(each='{item in opts.time}') {item.seconds}秒チャレンジ
     div.fs20.text-center.pt30 ±{opts.difficulty.seconds}秒以内で成功！
     div.h-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
@@ -28,6 +29,29 @@ page-stopwatch
     });
 
     //- ダミー
+    this.opts.time = [
+      {
+        seconds : "5",
+        setting_time : "5000",
+      },
+      {
+        seconds : "10",
+        setting_time : "10000",
+      },
+      {
+        seconds : "15",
+        setting_time : "15000",
+      },
+      {
+        seconds : "20",
+        setting_time : "20000",
+      },
+      {
+        seconds : "30",
+        setting_time : "30000",
+      },
+    ];
+
     this.opts.difficulty =
       {
         level : "1",
@@ -75,7 +99,11 @@ page-stopwatch
       //- 秒に誤差が出ないようelapsedTimeからthis.timerを書き換え
       elapsedTime += Date.now() - startTime;
       var strTimer = String(elapsedTime);
-      s = strTimer.slice(-5, 2).padStart(2, 0);
+      if (strTimer.length === 4) {
+        s = strTimer.slice(-4, 1).padStart(2, 0);
+      } else if (strTimer.length === 5) {
+        s = strTimer.slice(-5, 2).padStart(2, 0);
+      }
       ms = strTimer.slice(-3).padStart(3, 0);
       this.timer = false;
       this.timer = `${m}:${s}.${ms}`;
@@ -89,7 +117,6 @@ page-stopwatch
       if (check_time <= this.opts.difficulty.border_time) {
         this.clear = true;
         spat.modal.alert("成功！！");
-
       } else {
         this.stop();
         this.reset();
