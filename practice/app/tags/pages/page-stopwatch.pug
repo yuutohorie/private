@@ -4,8 +4,8 @@ page-stopwatch
   
   //- コンテンツ
   div.flex.fh.flex-column.h90per
-    select.fs20.pt30
-      option(each='{item in opts.time}') {item.seconds}秒チャレンジ
+    div.w-full.fs20.text-center.cursor-pointer.pt30(onclick='{toggleOpen}') {setTime ? setTime : "hogehoge"}
+      div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}hogehoge
     div.fs20.text-center.pt30 ±{opts.difficulty.seconds}秒以内で成功！
     div.h-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
@@ -31,23 +31,23 @@ page-stopwatch
     //- ダミー
     this.opts.time = [
       {
-        seconds : "5",
+        seconds : "5秒チャレンジ",
         setting_time : "5000",
       },
       {
-        seconds : "10",
+        seconds : "10秒チャレンジ",
         setting_time : "10000",
       },
       {
-        seconds : "15",
+        seconds : "15秒チャレンジ",
         setting_time : "15000",
       },
       {
-        seconds : "20",
+        seconds : "20秒チャレンジ",
         setting_time : "20000",
       },
       {
-        seconds : "30",
+        seconds : "30秒チャレンジ",
         setting_time : "30000",
       },
     ];
@@ -61,6 +61,20 @@ page-stopwatch
         border_time : 1000,
       };
 
+    //- 見た目
+    this.toggleOpen = () => {
+      this.selectOpen = !this.selectOpen;
+      this.update();
+    };
+
+    this.selectSeconds = (e) => {
+      this.setTime = e.item.item.seconds;
+      this.setting_time = e.item.item.setting_time;
+      this.update();
+    };
+
+
+    //- タイマー系
     var startTime;
     var timeoutId;
     var elapsedTime = 0;
@@ -113,7 +127,7 @@ page-stopwatch
       this.update();
 
       //- クリア判定
-      var check_time = Math.abs(elapsedTime - this.opts.difficulty.setting_time);
+      var check_time = Math.abs(elapsedTime - this.setting_time);
       if (check_time <= this.opts.difficulty.border_time) {
         this.clear = true;
         spat.modal.alert("成功！！");
