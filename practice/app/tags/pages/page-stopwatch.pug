@@ -1,0 +1,72 @@
+page-stopwatch
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
+    module-header.w-full(title='STOP WATCH', back='{true}')
+  //- コンテンツ
+  div.flex.flex-column.h90per
+    div.h-full.overflow-scroll(ref='body')
+      div.container.f.fh.flex-column.p30
+        div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
+        div
+          div.start.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : "bg-pink"}') Start
+          div.stop.button.text-white(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
+          div.reset.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
+
+  script.
+    this.on('mount', () => {
+    });
+
+    this.on('show', () => {
+      this.timer = false;
+    });
+
+    this.on('hide', () => {
+      this.stop();
+      this.reset();
+    });
+
+    var startTime;
+    var timeoutId;
+    var elapsedTime = 0;
+
+    this.countUp = () => {
+      var d = new Date(Date.now() - startTime + elapsedTime);
+      var m = String(d.getMinutes()).padStart(2, 0);
+      var s = String(d.getSeconds()).padStart(2, 0);
+      var ms = String(d.getMilliseconds()).padStart(3, 0);
+      this.timer = `${m}:${s}.${ms}`;
+      this.update();
+      timeoutId = setTimeout(() => {
+        this.countUp();
+      }, 10);
+    };
+
+    this.start = () => {
+      //- 計測中は押せなくする
+      if (this.measuring) return;
+
+      startTime = Date.now();
+      this.measuring = true;
+      this.stopTimer = false;
+      this.countUp();
+    };
+
+    this.stop = () => {
+      //- ストップ中は押せなくする
+      if (!this.measuring) return;
+
+      clearTimeout(timeoutId);
+      this.measuring = false;
+      this.stopTimer = true;
+      elapsedTime += Date.now() - startTime;
+    };
+
+    this.reset = () => {
+      //- 計測中は押せなくする
+      if (this.measuring) return;
+
+      this.timer = false;
+      this.measuring = false;
+      this.stopTimer = false;
+      elapsedTime = 0;
+      this.update();
+    };
