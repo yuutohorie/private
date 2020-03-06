@@ -15,32 +15,54 @@ page-stopwatch
     this.on('mount', () => {
     });
 
+    var startTime;
+    var timeoutId;
+
     this.countUp = () => {
-      var d = new Date(Date.now() - this.startTime);
+      //- if (this.timerstop) {
+      //-   debugger;
+      //-   var d = new Date(Date.now() - this.startTime);
+      //-   var m = String(d.getMinutes()).padStart(2, 0);
+      //-   var s = String(d.getSeconds()).padStart(2, 0);
+      //-   var ms = String(d.getMilliseconds()).padStart(3, 0);
+      //-   this.timer = m + ':' + s + ':' + ms;
+      //-   this.update();
+      //-   this.timerstop = false;
+      //-   this.timerId = setTimeout(() => {
+      //-     this.countUp();
+      //-   }, 10);
+      //- }
+      var d = new Date(Date.now() - startTime);
       var m = String(d.getMinutes()).padStart(2, 0);
       var s = String(d.getSeconds()).padStart(2, 0);
       var ms = String(d.getMilliseconds()).padStart(3, 0);
       this.timer = m + ':' + s + ':' + ms;
       this.update();
-      this.timerId = setTimeout(() => {
+      this.measuring = true;
+      timeoutId= setTimeout(() => {
         this.countUp();
       }, 10);
     };
 
     this.start = () => {
-      this.startTime = Date.now();
+      if (this.measuring) {
+        this.stop();
+      }
+      startTime = Date.now();
       this.countUp();
     };
 
     this.stop = () => {
-      clearTimeout(this.timerId);
-      this.timerstop = true;
+      clearTimeout(timeoutId);
+      this.measuring = false;
     };
 
     this.reset = () => {
-      if (this.timerstop) {
-        this.timer = false;
+      if (this.measuring) {
+        clearTimeout(timeoutId);
+        this.start();
         return;
       }
-      this.start();
+      this.timer = false;
+      this.measuring = false;
     };
