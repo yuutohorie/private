@@ -7,9 +7,9 @@ page-stopwatch
       div.container.f.fh.flex-column.p30
         div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
         div
-          button.button(onclick='{start}') Start
-          button.stop.button(onclick='{stop}') Stop
-          button.reset.button(onclick='{reset}') Reset
+          div.start.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : "bg-pink"}') Start
+          div.stop.button.text-white(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
+          div.reset.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
 
   script.
     this.on('mount', () => {
@@ -34,7 +34,6 @@ page-stopwatch
       var s = String(d.getSeconds()).padStart(2, 0);
       var ms = String(d.getMilliseconds()).padStart(3, 0);
       this.timer = `${m}:${s}.${ms}`;
-      this.measuring = true;
       this.update();
       timeoutId = setTimeout(() => {
         this.countUp();
@@ -46,6 +45,8 @@ page-stopwatch
       if (this.measuring) return;
 
       startTime = Date.now();
+      this.measuring = true;
+      this.stopTimer = false;
       this.countUp();
     };
 
@@ -55,6 +56,7 @@ page-stopwatch
 
       clearTimeout(timeoutId);
       this.measuring = false;
+      this.stopTimer = true;
       elapsedTime += Date.now() - startTime;
     };
 
@@ -64,6 +66,7 @@ page-stopwatch
 
       this.timer = false;
       this.measuring = false;
+      this.stopTimer = false;
       elapsedTime = 0;
       this.update();
     };
