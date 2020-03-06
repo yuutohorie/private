@@ -75,7 +75,7 @@ page-stopwatch
       //- 秒に誤差が出ないようelapsedTimeからthis.timerを書き換え
       elapsedTime += Date.now() - startTime;
       var strTimer = String(elapsedTime);
-      s = strTimer.slice(-4, 1).padStart(2, 0);
+      s = strTimer.slice(-5, 2).padStart(2, 0);
       ms = strTimer.slice(-3).padStart(3, 0);
       this.timer = false;
       this.timer = `${m}:${s}.${ms}`;
