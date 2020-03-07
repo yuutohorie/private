@@ -9,12 +9,13 @@ page-stopwatch
         div.px20 {setTime ? setTime + "秒チャレンジ": "秒数を選択"}
         div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
       div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
-    div.fs20.text-center.pt30 ±{opts.difficulty.seconds}秒以内で成功！
+    div.fs18.pt30 Level:{opts.difficulty[current].level}
+    div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.h-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
         div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
         div
-          div.start.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : "bg-pink"}') Start
+          div.start.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : setTime ? "bg-pink" : "bg-weak"}') Start
           div.stop.button.text-white(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
           div.reset.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
 
@@ -24,6 +25,7 @@ page-stopwatch
 
     this.on('show', () => {
       this.timer = false;
+      this.current = 0;
     });
 
     this.on('hide', () => {
@@ -56,12 +58,28 @@ page-stopwatch
       },
     ];
 
-    this.opts.difficulty =
+    this.opts.difficulty = [
       {
         level : "1",
         seconds : "1",
         border_time : 1000,
-      };
+      },
+      {
+        level : "2",
+        seconds : "0.5",
+        border_time : 500,
+      },
+      {
+        level : "3",
+        seconds : "0.25",
+        border_time : 250,
+      },
+      {
+        level : "MAX",
+        seconds : "0.1",
+        border_time : 100,
+      },
+    ];
 
     //- 見た目
     this.toggleOpen = () => {
@@ -132,17 +150,7 @@ page-stopwatch
       this.measuring = false;
       this.stopTimer = true;
       this.update();
-
-      //- クリア判定
-      var check_time = Math.abs(elapsedTime - this.setting_time);
-      if (check_time <= this.opts.difficulty.border_time) {
-        this.clear = true;
-        spat.modal.alert("成功！！");
-      } else {
-        this.stop();
-        this.reset();
-        spat.modal.alert("失敗");
-      }
+      this.checkClear(elapsedTime);
     };
 
     this.reset = () => {
@@ -155,3 +163,26 @@ page-stopwatch
       elapsedTime = 0;
       this.update();
     };
+
+      //- クリア判定
+    this.checkClear = (elapsedTime) => {
+      var check_time = Math.abs(elapsedTime - this.setting_time);
+      if (check_time <= this.opts.difficulty[this.current].border_time) {
+        this.clear = true;
+        if (this.current < 3){
+          this.current++;
+          spat.modal.alert("成功！！");
+        } else {
+          spat.modal.alert("congratulations!!!");
+          this.current = 0;
+        }
+        this.stop();
+        this.reset();
+      } else {
+        this.stop();
+        this.reset();
+        this.current = 0;
+        spat.modal.alert("失敗");
+      }
+    };
+
