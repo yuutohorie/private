@@ -5,19 +5,21 @@ page-stopwatch
   //- コンテンツ
   div.flex.fh.flex-column.h90per
     div.f.flex-column.w-full.fs20.text-center.pt30.px30
-      div.f.fh.cursor-pointer(onclick='{toggleOpen}')
-        div.px20 {setTime ? setTime + "秒チャレンジ": "秒数を選択"}
-        div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
-      div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
+      div.button.bg-pink.text-white(onclick='{openLimit}') 難易度選択
+      //- モーダルで選択にするため一旦コメントアウト
+      //- div.f.fh.cursor-pointer(onclick='{toggleOpen}')
+      //-   div.px20 {setTime ? setTime + "秒チャレンジ": "秒数選択"}
+      //-   div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
+      //- div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
     div.fs18.pt30 Level:{opts.difficulty[current].level}
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
-    div.h-full.overflow-scroll(ref='body')
+    div.s-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
         div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
-        div
-          div.start.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : setTime ? "bg-pink" : "bg-weak"}') Start
-          div.stop.button.text-white(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
-          div.reset.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
+        div.f.flex-around.w-full
+          div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : setTime ? "bg-pink" : "bg-weak"}') Start
+          div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
+          div.reset.w-full.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
 
   script.
     this.on('mount', () => {
@@ -35,28 +37,6 @@ page-stopwatch
     });
 
     //- ダミー
-    this.opts.time = [
-      {
-        seconds : "5",
-        setting_time : "5000",
-      },
-      {
-        seconds : "10",
-        setting_time : "10000",
-      },
-      {
-        seconds : "15",
-        setting_time : "15000",
-      },
-      {
-        seconds : "20",
-        setting_time : "20000",
-      },
-      {
-        seconds : "30",
-        setting_time : "30000",
-      },
-    ];
 
     this.opts.difficulty = [
       {
@@ -184,5 +164,10 @@ page-stopwatch
         this.current = 0;
         spat.modal.alert("失敗");
       }
+    };
+
+    //- リミット選択モーダル
+    this.openLimit = () => {
+      spat.modal.open('modal-selectlimit');
     };
 

@@ -1,0 +1,43 @@
+modal-selectlimit(spat-animation='scale')
+  div.s-full.f.fh.bg-modalblack(ref='modal', onclick='{close}')
+    div.relative.f.fm.flex-column.w80per.h80per.bg-white.rounded-4.p20(onclick='{this.stopClose}')
+      //- 閉じるボタン
+      div.absolute.t0.r0.f.fh.fs22.material-icons.cursor-pointer.p20(onclick='{close}') clear
+      //- 秒数選択
+      div.s-full.f.fm.flex-column.fs24.p30
+        div.f.fm(each='{item in limit}')
+          input(type='radio', name='{item.seconds}')
+          div {item.seconds}
+
+
+
+
+  script.
+
+    this.limit = [
+      {
+        seconds : "5",
+        setting_time : "5000",
+      },
+      {
+        seconds : "10",
+        setting_time : "10000",
+      },
+      {
+        seconds : "15",
+        setting_time : "15000",
+      },
+      {
+        seconds : "20",
+        setting_time : "20000",
+      },
+      {
+        seconds : "30",
+        setting_time : "30000",
+      },
+    ];
+
+    this.stopClose = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
