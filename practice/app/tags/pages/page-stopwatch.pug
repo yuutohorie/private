@@ -4,7 +4,10 @@ page-stopwatch
   
   //- コンテンツ
   div.flex.fh.flex-column.h90per
-    div.w-full.fs20.text-center.cursor-pointer.pt30(onclick='{toggleOpen}') {setTime ? setTime : "秒数を選択"}
+    div.f.flex-column.w-full.fs20.text-center.pt30.px30
+      div.f.fh.cursor-pointer(onclick='{toggleOpen}')
+        div.px20 {setTime ? setTime + "秒チャレンジ": "秒数を選択"}
+        div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
       div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
     div.fs20.text-center.pt30 ±{opts.difficulty.seconds}秒以内で成功！
     div.h-full.overflow-scroll(ref='body')
@@ -32,23 +35,23 @@ page-stopwatch
     //- ダミー
     this.opts.time = [
       {
-        seconds : "5秒チャレンジ",
+        seconds : "5",
         setting_time : "5000",
       },
       {
-        seconds : "10秒チャレンジ",
+        seconds : "10",
         setting_time : "10000",
       },
       {
-        seconds : "15秒チャレンジ",
+        seconds : "15",
         setting_time : "15000",
       },
       {
-        seconds : "20秒チャレンジ",
+        seconds : "20",
         setting_time : "20000",
       },
       {
-        seconds : "30秒チャレンジ",
+        seconds : "30",
         setting_time : "30000",
       },
     ];
@@ -56,9 +59,7 @@ page-stopwatch
     this.opts.difficulty =
       {
         level : "1",
-        time : "10",
         seconds : "1",
-        setting_time : 10000,
         border_time : 1000,
       };
 
@@ -71,6 +72,9 @@ page-stopwatch
     this.selectSeconds = (e) => {
       this.setTime = e.item.item.seconds;
       this.setting_time = e.item.item.setting_time;
+      if (this.setTime) {
+        this.selectOpen = false;
+      }
       this.update();
     };
 
