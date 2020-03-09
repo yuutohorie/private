@@ -1,9 +1,9 @@
 page-stopwatch
-  div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1
     module-header.w-full(title='STOP WATCH', back='{timer ? "" : true}')
   
   //- コンテンツ
-  div.flex.fh.flex-column.h90per.px30
+  div.flex.fh.flex-column.h90per.bg-black.text-white.px30
     div.f.flex-column.w-full.fs20.text-center.pt30
       div.button.text-white(onclick='{openLimit}', class='{seconds ? "bg-weak":"bg-pink"}') 難易度選択
       div.pt30.bold(if='{seconds}') 目標タイム:{seconds.seconds}秒
@@ -11,9 +11,9 @@ page-stopwatch
     div.fs18.pt30 Level:{opts.difficulty[current].level}
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
-      div.container.f.fh.flex-column.py30
-        div.timer.relative.fs60.mb30 {!timer ? "00:00.000" : timerhide ? timerhide : timer}
-        div.f.flex-around.w-full
+      div.container.f.fm.flex-around.flex-column.s-full.py30
+        div.timer.relative.fs60.py50 {!timer ? "00:00.000" : timerhide ? timerhide : timer}
+        div.f.flex-around.w-full.py50
           div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
           div.reset.w-full.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
