@@ -3,22 +3,17 @@ page-stopwatch
     module-header.w-full(title='STOP WATCH', back='{timer ? "" : true}')
   
   //- コンテンツ
-  div.flex.fh.flex-column.h90per
-    div.f.flex-column.w-full.fs20.text-center.pt30.px30
+  div.flex.fh.flex-column.h90per.px30
+    div.f.flex-column.w-full.fs20.text-center.pt30
       div.button.text-white(onclick='{openLimit}', class='{seconds ? "bg-weak":"bg-pink"}') 難易度選択
       div.pt30.bold(if='{seconds}') 目標タイム:{seconds.seconds}秒
-      
-      //- モーダルで選択にするため一旦コメントアウト
-      //- div.f.fh.cursor-pointer(onclick='{toggleOpen}')
-      //-   div.px20 {setTime ? setTime + "秒チャレンジ": "秒数選択"}
-      //-   div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
-      //- div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
     
     div.fs18.pt30 Level:{opts.difficulty[current].level}
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
-      div.container.f.fh.flex-column.p30
-        div.timer.fs60.pb30 {timer ? timer: "00:00.000"}
+      div.container.f.fh.flex-column.py30
+        div.timer.relative.fs60.mb30 {timer ? timer: "00:00.000"}
+          div.absolute.trbl0.s-full.bg-black(class='{timerhide ? "" : "hide"}')
         div.f.flex-around.w-full
           div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
@@ -65,19 +60,6 @@ page-stopwatch
       },
     ];
 
-    //- 見た目
-    this.toggleOpen = () => {
-      this.selectOpen = !this.selectOpen;
-      this.update();
-    };
-
-    this.selectSeconds = (e) => {
-      //- this.setTime = e.item.item.seconds;
-      this.setting_time = e.item.item.setting_time;
-      this.update();
-    };
-
-
     //- タイマー系
     var startTime;
     var timeoutId;
@@ -96,7 +78,7 @@ page-stopwatch
       if (hideTime < 5000) {
         this.timer = `${m}:${s}.${ms}`;
       } else {
-        this.timer = false;
+        this.timerhide = true;
       }
       this.update();
       timeoutId = setTimeout(() => {
@@ -120,6 +102,7 @@ page-stopwatch
       //- ストップ中は押せなくする
       if (!this.measuring) return;
 
+      this.timerhide = false;
       clearTimeout(timeoutId);
       //- 秒に誤差が出ないようelapsedTimeからthis.timerを書き換え
       elapsedTime += Date.now() - startTime;
