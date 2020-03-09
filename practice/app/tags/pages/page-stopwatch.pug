@@ -1,6 +1,6 @@
 page-stopwatch
   div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
-    module-header.w-full(title='STOP WATCH', back='{true}')
+    module-header.w-full(title='STOP WATCH', back='{timer ? "" : true}')
   
   //- コンテンツ
   div.flex.fh.flex-column.h90per
@@ -136,7 +136,7 @@ page-stopwatch
       this.measuring = false;
       this.stopTimer = true;
       this.update();
-      this.checkClear(elapsedTime);
+      this.checkClear(elapsedTime, this.timer);
     };
 
     this.reset = () => {
@@ -151,13 +151,13 @@ page-stopwatch
     };
 
       //- クリア判定
-    this.checkClear = (elapsedTime) => {
+    this.checkClear = (elapsedTime, resultTime) => {
       var check_time = Math.abs(elapsedTime - this.seconds.setting_time);
       if (check_time <= this.opts.difficulty[this.current].border_time) {
         this.clear = true;
         if (this.current < 3){
           this.current++;
-          spat.modal.alert('記録'+ this.timer + '\n' + '成功！！');
+          spat.modal.alert('【記録】' + resultTime + '秒' + '\n' + '成功！！');
         } else {
           spat.modal.alert("congratulations!!!");
           this.current = 0;
@@ -168,7 +168,7 @@ page-stopwatch
         this.stop();
         this.reset();
         this.current = 0;
-        spat.modal.alert('記録'+ this.timer + '\n' + '失敗');
+        spat.modal.alert('【記録】' + resultTime + '秒' + '\n' + '失敗');
       }
     };
 
