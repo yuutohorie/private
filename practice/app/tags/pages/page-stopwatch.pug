@@ -5,19 +5,22 @@ page-stopwatch
   //- コンテンツ
   div.flex.fh.flex-column.h90per
     div.f.flex-column.w-full.fs20.text-center.pt30.px30
-      div.button.bg-pink.text-white(onclick='{openLimit}') 難易度選択
+      div.button.text-white(onclick='{openLimit}', class='{seconds ? "bg-weak":"bg-pink"}') 難易度選択
+      div.pt30.bold(if='{seconds}') 目標タイム:{seconds.seconds}秒
+      
       //- モーダルで選択にするため一旦コメントアウト
       //- div.f.fh.cursor-pointer(onclick='{toggleOpen}')
       //-   div.px20 {setTime ? setTime + "秒チャレンジ": "秒数選択"}
       //-   div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
       //- div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
+    
     div.fs18.pt30 Level:{opts.difficulty[current].level}
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
         div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
         div.f.flex-around.w-full
-          div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : setTime ? "bg-pink" : "bg-weak"}') Start
+          div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : set_limit ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
           div.reset.w-full.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
 
@@ -33,7 +36,7 @@ page-stopwatch
     this.on('hide', () => {
       this.stop();
       this.reset();
-      this.setTime = false;
+      this.set_limit = false;
     });
 
     //- ダミー
@@ -68,11 +71,8 @@ page-stopwatch
     };
 
     this.selectSeconds = (e) => {
-      this.setTime = e.item.item.seconds;
+      //- this.setTime = e.item.item.seconds;
       this.setting_time = e.item.item.setting_time;
-      if (this.setTime) {
-        this.selectOpen = false;
-      }
       this.update();
     };
 
@@ -100,7 +100,7 @@ page-stopwatch
 
     this.start = () => {
       //- 秒数選択前は押せなくする
-      if (!this.setTime) return;
+      if (!this.set_limit) return;
       //- 計測中は押せなくする
       if (this.measuring) return;
 
@@ -146,7 +146,7 @@ page-stopwatch
 
       //- クリア判定
     this.checkClear = (elapsedTime) => {
-      var check_time = Math.abs(elapsedTime - this.setting_time);
+      var check_time = Math.abs(elapsedTime - this.seconds.setting_time);
       if (check_time <= this.opts.difficulty[this.current].border_time) {
         this.clear = true;
         if (this.current < 3){
@@ -168,12 +168,14 @@ page-stopwatch
 
     //- リミット選択モーダル
     this.openLimit = () => {
-      spat.modal.open('modal-selectlimit');
+      var modal = spat.modal.open('modal-selectlimit');
+      
+      //- modal-selectlimitが閉じると発火
+      modal.on('setLimit', (set_limit, seconds) => {
+        this.set_limit = set_limit;
+        this.seconds = seconds;
+        this.update();
+      });
     };
 
-    //- modal-selectlimitが閉じると発火
-    this.on('setLimit', (set_limit) => {
-      debugger;
-      this.set_limit = set_limit;
-    });
 
