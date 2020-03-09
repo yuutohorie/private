@@ -10,7 +10,7 @@ modal-selectlimit(spat-animation='scale')
             input.mr10(type='radio', name='limit', value='{item.seconds}')
             div {item.seconds}秒
         //- 確認テキスト
-        div.fs30.bold.py30(if='{checkLimit}') {checkLimit}秒に挑戦！
+        div.fs28.py30(if='{checkLimit}') {checkLimit}秒に挑戦！
         //- 決定ボタン
         div.button.text-white.px40(class='{setLimit ? "bg-pink":"bg-weak"}', onclick='{decisionLimit}') 決定
 
@@ -56,5 +56,7 @@ modal-selectlimit(spat-animation='scale')
         spat.modal.alert('秒数を選んでください');
         return;
       }
+      this.trigger('setLimit', this.setLimit);
+      debugger
       this.close();
     };

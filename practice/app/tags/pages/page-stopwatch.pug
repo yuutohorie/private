@@ -171,3 +171,9 @@ page-stopwatch
       spat.modal.open('modal-selectlimit');
     };
 
+    //- modal-selectlimitが閉じると発火
+    this.on('setLimit', (set_limit) => {
+      debugger;
+      this.set_limit = set_limit;
+    });
+
