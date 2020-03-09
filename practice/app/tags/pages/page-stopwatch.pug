@@ -20,7 +20,7 @@ page-stopwatch
       div.container.f.fh.flex-column.p30
         div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
         div.f.flex-around.w-full
-          div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : set_limit ? "bg-pink" : "bg-weak"}') Start
+          div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
           div.reset.w-full.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
 
@@ -31,12 +31,13 @@ page-stopwatch
     this.on('show', () => {
       this.timer = false;
       this.current = 0;
+      this.update();
     });
 
     this.on('hide', () => {
       this.stop();
       this.reset();
-      this.set_limit = false;
+      this.seconds = false;
     });
 
     //- ダミー
@@ -100,7 +101,7 @@ page-stopwatch
 
     this.start = () => {
       //- 秒数選択前は押せなくする
-      if (!this.set_limit) return;
+      if (!this.seconds) return;
       //- 計測中は押せなくする
       if (this.measuring) return;
 
@@ -171,8 +172,7 @@ page-stopwatch
       var modal = spat.modal.open('modal-selectlimit');
       
       //- modal-selectlimitが閉じると発火
-      modal.on('setLimit', (set_limit, seconds) => {
-        this.set_limit = set_limit;
+      modal.on('setLimit', (seconds) => {
         this.seconds = seconds;
         this.update();
       });
