@@ -8,8 +8,8 @@ page-stopwatch
       div.button.text-white(onclick='{openLimit}', class='{seconds ? "bg-weak":"bg-pink"}') 難易度選択
       div.pt30.bold(if='{seconds}') 目標タイム:{seconds.seconds}秒
     
-    div.fs18.pt30 Level:{opts.difficulty[current].level}
-    div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
+    div.fs22.bold.pt30 Level:{opts.difficulty[current].level}
+    div.fs22.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
       div.container.f.fm.flex-around.flex-column.s-full.py30
         div.timer.relative.fs60.py50 {!timer ? "00:00.000" : timerhide ? timerhide : timer}
