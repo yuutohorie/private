@@ -1,0 +1,19 @@
+page-block-breaking
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1
+    module-header.w-full(title='ブロック崩し', back='{true}')
+  
+  //- コンテンツ
+  div.h90per.p30
+    canvas.w480.h320(ref='myCanvas')
+
+
+  script.
+    this.on('show', () => {
+      var canvas = this.refs.myCanvas;
+      var ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.rect(20, 40, 50, 50);
+      ctx.fillStyle = "FF0000";
+      ctx.fill();
+      ctx.closePath();
+    });
