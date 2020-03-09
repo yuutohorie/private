@@ -18,7 +18,7 @@ page-stopwatch
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
-        div.timer.fs26.pb30 {timer ? timer: "00:00.000"}
+        div.timer.fs60.pb30 {timer ? timer: "00:00.000"}
         div.f.flex-around.w-full
           div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
@@ -93,8 +93,7 @@ page-stopwatch
       s = String(d.getSeconds()).padStart(2, 0);
       ms = String(d.getMilliseconds()).padStart(3, 0);
       var hideTime = Date.now() - startTime;
-      console.log(hideTime);
-      if (hideTime < 3000) {
+      if (hideTime < 5000) {
         this.timer = `${m}:${s}.${ms}`;
       } else {
         this.timer = false;
@@ -158,7 +157,7 @@ page-stopwatch
         this.clear = true;
         if (this.current < 3){
           this.current++;
-          spat.modal.alert("成功！！");
+          spat.modal.alert('記録'+ this.timer + '\n' + '成功！！');
         } else {
           spat.modal.alert("congratulations!!!");
           this.current = 0;
@@ -169,7 +168,7 @@ page-stopwatch
         this.stop();
         this.reset();
         this.current = 0;
-        spat.modal.alert("失敗");
+        spat.modal.alert('記録'+ this.timer + '\n' + '失敗');
       }
     };
 
