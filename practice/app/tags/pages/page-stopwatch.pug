@@ -159,6 +159,10 @@ page-stopwatch
 
     //- リミット選択モーダル
     this.openLimit = () => {
+      //- 計測中は押せない
+      if (this.measuring) return;
+      
+      //- モーダル
       var modal = spat.modal.open('modal-selectlimit');
       
       //- modal-selectlimitが閉じると発火
