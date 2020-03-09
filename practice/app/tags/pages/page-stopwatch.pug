@@ -12,8 +12,7 @@ page-stopwatch
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.py30
-        div.timer.relative.fs60.mb30 {timer ? timer: "00:00.000"}
-          div.absolute.trbl0.s-full.bg-black(class='{timerhide ? "" : "hide"}')
+        div.timer.relative.fs60.mb30 {!timer ? "00:00.000" : timerhide ? timerhide : timer}
         div.f.flex-around.w-full
           div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
@@ -78,7 +77,10 @@ page-stopwatch
       if (hideTime < 5000) {
         this.timer = `${m}:${s}.${ms}`;
       } else {
-        this.timerhide = true;
+        var hm = Math.floor(Math.random() * 100);
+        var hs = Math.floor(Math.random() * 100);
+        var hms = Math.floor(Math.random() * 1000);
+        this.timerhide = `${hm}:${hs}.${hms}`;
       }
       this.update();
       timeoutId = setTimeout(() => {
