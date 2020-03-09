@@ -1,23 +1,22 @@
 page-stopwatch
-  div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
-    module-header.w-full(title='STOP WATCH', back='{true}')
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1
+    module-header.w-full(title='STOP WATCH', back='{timer ? "" : true}')
   
   //- コンテンツ
-  div.flex.fh.flex-column.h90per
-    div.f.flex-column.w-full.fs20.text-center.pt30.px30
-      div.f.fh.cursor-pointer(onclick='{toggleOpen}')
-        div.px20 {setTime ? setTime + "秒チャレンジ": "秒数を選択"}
-        div.t0.r0.fs20.material-icons.transition {selectOpen ? "keyboard_arrow_up":"keyboard_arrow_down"}
-      div(each='{item in opts.time}', if='{selectOpen}', onclick='{selectSeconds}') {item.seconds}
-    div.fs18.pt30 Level:{opts.difficulty[current].level}
-    div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
-    div.h-full.overflow-scroll(ref='body')
-      div.container.f.fh.flex-column.p30
-        div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
-        div
-          div.start.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : setTime ? "bg-pink" : "bg-weak"}') Start
-          div.stop.button.text-white(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
-          div.reset.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
+  div.flex.fh.flex-column.h90per.bg-black.text-white.px30
+    div.f.flex-column.w-full.fs20.text-center.pt30
+      div.button.text-white(onclick='{openLimit}', class='{seconds ? "bg-weak":"bg-pink"}') 難易度選択
+      div.pt30.bold(if='{seconds}') 目標タイム:{seconds.seconds}秒
+    
+    div.fs22.bold.pt30 Level:{opts.difficulty[current].level}
+    div.fs22.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
+    div.s-full.overflow-scroll(ref='body')
+      div.container.f.fm.flex-around.flex-column.s-full.py30
+        div.timer.relative.fs60.py50 {!timer ? "00:00.000" : timerhide ? timerhide : timer}
+        div.f.flex-around.w-full.py50
+          div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
+          div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
+          div.reset.w-full.button.text-white(onclick='{reset}', class='{!measuring && stopTimer ? "bg-pink" : "bg-weak"}') Reset
 
   script.
     this.on('mount', () => {
@@ -26,37 +25,16 @@ page-stopwatch
     this.on('show', () => {
       this.timer = false;
       this.current = 0;
+      this.update();
     });
 
     this.on('hide', () => {
       this.stop();
       this.reset();
-      this.setTime = false;
+      this.seconds = false;
     });
 
     //- ダミー
-    this.opts.time = [
-      {
-        seconds : "5",
-        setting_time : "5000",
-      },
-      {
-        seconds : "10",
-        setting_time : "10000",
-      },
-      {
-        seconds : "15",
-        setting_time : "15000",
-      },
-      {
-        seconds : "20",
-        setting_time : "20000",
-      },
-      {
-        seconds : "30",
-        setting_time : "30000",
-      },
-    ];
 
     this.opts.difficulty = [
       {
@@ -81,22 +59,6 @@ page-stopwatch
       },
     ];
 
-    //- 見た目
-    this.toggleOpen = () => {
-      this.selectOpen = !this.selectOpen;
-      this.update();
-    };
-
-    this.selectSeconds = (e) => {
-      this.setTime = e.item.item.seconds;
-      this.setting_time = e.item.item.setting_time;
-      if (this.setTime) {
-        this.selectOpen = false;
-      }
-      this.update();
-    };
-
-
     //- タイマー系
     var startTime;
     var timeoutId;
@@ -111,7 +73,15 @@ page-stopwatch
       m = String(d.getMinutes()).padStart(2, 0);
       s = String(d.getSeconds()).padStart(2, 0);
       ms = String(d.getMilliseconds()).padStart(3, 0);
-      this.timer = `${m}:${s}.${ms}`;
+      var hideTime = Date.now() - startTime;
+      if (hideTime < 5000) {
+        this.timer = `${m}:${s}.${ms}`;
+      } else {
+        var hm = Math.floor(Math.random() * 100);
+        var hs = Math.floor(Math.random() * 100);
+        var hms = Math.floor(Math.random() * 1000);
+        this.timerhide = `${hm}:${hs}.${hms}`;
+      }
       this.update();
       timeoutId = setTimeout(() => {
         this.countUp();
@@ -120,7 +90,7 @@ page-stopwatch
 
     this.start = () => {
       //- 秒数選択前は押せなくする
-      if (!this.setTime) return;
+      if (!this.seconds) return;
       //- 計測中は押せなくする
       if (this.measuring) return;
 
@@ -134,6 +104,7 @@ page-stopwatch
       //- ストップ中は押せなくする
       if (!this.measuring) return;
 
+      this.timerhide = false;
       clearTimeout(timeoutId);
       //- 秒に誤差が出ないようelapsedTimeからthis.timerを書き換え
       elapsedTime += Date.now() - startTime;
@@ -150,7 +121,7 @@ page-stopwatch
       this.measuring = false;
       this.stopTimer = true;
       this.update();
-      this.checkClear(elapsedTime);
+      this.checkClear(elapsedTime, this.timer);
     };
 
     this.reset = () => {
@@ -165,13 +136,13 @@ page-stopwatch
     };
 
       //- クリア判定
-    this.checkClear = (elapsedTime) => {
-      var check_time = Math.abs(elapsedTime - this.setting_time);
+    this.checkClear = (elapsedTime, resultTime) => {
+      var check_time = Math.abs(elapsedTime - this.seconds.setting_time);
       if (check_time <= this.opts.difficulty[this.current].border_time) {
         this.clear = true;
         if (this.current < 3){
           this.current++;
-          spat.modal.alert("成功！！");
+          spat.modal.alert('【記録】' + resultTime + '秒' + '\n' + '成功！！');
         } else {
           spat.modal.alert("congratulations!!!");
           this.current = 0;
@@ -182,7 +153,23 @@ page-stopwatch
         this.stop();
         this.reset();
         this.current = 0;
-        spat.modal.alert("失敗");
+        spat.modal.alert('【記録】' + resultTime + '秒' + '\n' + '失敗');
       }
     };
+
+    //- リミット選択モーダル
+    this.openLimit = () => {
+      //- 計測中は押せない
+      if (this.measuring) return;
+      
+      //- モーダル
+      var modal = spat.modal.open('modal-selectlimit');
+      
+      //- modal-selectlimitが閉じると発火
+      modal.on('setLimit', (seconds) => {
+        this.seconds = seconds;
+        this.update();
+      });
+    };
+
 

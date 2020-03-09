@@ -1,0 +1,61 @@
+modal-selectlimit(spat-animation='scale')
+  div.s-full.f.fh.bg-modalblack(ref='modal', onclick='{close}')
+    div.relative.f.fm.flex-column.w80per.h80per.bg-white.rounded-4.p20(onclick='{this.stopClose}')
+      //- 閉じるボタン
+      div.absolute.t0.r0.f.fh.fs22.material-icons.cursor-pointer.p20(onclick='{close}') clear
+      //- 秒数選択
+      div.s-full.f.fm.flex-column.flex-between.fs24.p30
+        div.f.fm.flex-column.w-full
+          div.f.fm.w-full.py10(each='{item in limit}', onclick='{selectLimit}')
+            input.mr10(type='radio', name='limit', value='{item.seconds}')
+            div {item.seconds}秒
+        //- 確認テキスト
+        div.fs28.py30(if='{checkLimit}') {checkLimit}秒に挑戦！
+        //- 決定ボタン
+        div.button.text-white.px40(class='{seconds ? "bg-pink":"bg-weak"}', onclick='{decisionLimit}') 決定
+
+  script.
+
+    this.limit = [
+      {
+        seconds : "5",
+        setting_time : "5000",
+      },
+      {
+        seconds : "10",
+        setting_time : "10000",
+      },
+      {
+        seconds : "15",
+        setting_time : "15000",
+      },
+      {
+        seconds : "20",
+        setting_time : "20000",
+      },
+      {
+        seconds : "30",
+        setting_time : "30000",
+      },
+    ];
+
+    this.stopClose = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    this.selectLimit = (e) => {
+      e.currentTarget.firstElementChild.checked = true;
+      this.checkLimit = e.item.item.seconds;
+      this.seconds = e.item.item;
+      this.update();
+    };
+
+    this.decisionLimit = () => {
+      if (!this.seconds) {
+        spat.modal.alert('秒数を選んでください');
+        return;
+      }
+      this.trigger('setLimit', this.seconds);
+      this.close();
+    };
