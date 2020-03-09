@@ -18,7 +18,7 @@ page-stopwatch
     div.fs20.text-center.pt10 ±{opts.difficulty[current].seconds}秒以内で成功！
     div.s-full.overflow-scroll(ref='body')
       div.container.f.fh.flex-column.p30
-        div.timer.fs26.pb30 {timer ? this.timer: "00:00.000"}
+        div.timer.fs26.pb30 {timer ? timer: "00:00.000"}
         div.f.flex-around.w-full
           div.start.w-full.button.text-white(onclick='{start}', class='{measuring && !stopTimer ? "bg-weak" : seconds ? "bg-pink" : "bg-weak"}') Start
           div.stop.w-full.button.text-white.mx5(onclick='{stop}', class='{measuring ? "bg-pink" : "bg-weak"}') Stop
@@ -92,7 +92,13 @@ page-stopwatch
       m = String(d.getMinutes()).padStart(2, 0);
       s = String(d.getSeconds()).padStart(2, 0);
       ms = String(d.getMilliseconds()).padStart(3, 0);
-      this.timer = `${m}:${s}.${ms}`;
+      var hideTime = Date.now() - startTime;
+      console.log(hideTime);
+      if (hideTime < 3000) {
+        this.timer = `${m}:${s}.${ms}`;
+      } else {
+        this.timer = false;
+      }
       this.update();
       timeoutId = setTimeout(() => {
         this.countUp();
