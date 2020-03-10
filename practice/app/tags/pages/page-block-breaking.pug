@@ -3,8 +3,9 @@ page-block-breaking
     module-header.w-full(title='ブロック崩し', back='{true}')
   
   //- コンテンツ
-  div.h90per.p30
-    canvas.w480.h320(ref='myCanvas')
+  div.h90per
+    div.w-full.f.fh
+      canvas.w320.h320(ref='myCanvas')
 
 
   script.
@@ -13,7 +14,7 @@ page-block-breaking
       var ctx = canvas.getContext('2d');
       ctx.beginPath();
       ctx.rect(20, 40, 50, 50);
-      ctx.fillStyle = "FF0000";
+      ctx.fillStyle = "#FF0000";
       ctx.fill();
       ctx.closePath();
     });
