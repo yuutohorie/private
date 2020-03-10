@@ -41,11 +41,11 @@ spalate:
 client:
   env: default
   head:
-    title: spalate chat
+    title: yuto horie
     description: Hello, spalate!
     type: website
     image: https://chat-rabee-jp.appspot.com/static/images/ogp.png
-    favicon: /static/images/favicon.png
+    favicon: /static/images/main/main-icon.png
     url: https://rabee.jp
     meta:
       - { name: viewport, content: "width=device-width,height=device-height,user-scalable=no,initial-scale=1,maximum-scale=1,viewport-fit=cover" }
