@@ -1,0 +1,83 @@
+page-bike
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1
+    module-header.w-full(title='BIKE', back='{true}')
+  
+  //- コンテンツ
+  div.h90per.py30(ref='body')
+
+  script.
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = 500;
+    canvas.height = 350;
+
+    var perm = [];
+    while (perm.length < 255) {
+      while (perm.includes(val = Math.floor(Math.random() * 255)));
+      perm.push(val);
+    }
+
+    var lerp = (a, b, t) => a + (b - a) * (1 - Math.cos(t * Math.PI)) / 2;
+
+    var noise = x => {
+      x = x * 0.01 % 255;
+      return lerp(perm[Math.floor(x)], perm[Math.ceil(x)], x - Math.floor(x));
+    }
+
+    this.player = new function() {
+      this.x = canvas.width / 2;
+      this.y = 0;
+      this.ySpeed = 0;
+      this.rot = 0;
+
+      this.img = new Image();
+      this.img.src = "/static/images/main/main-icon.png";
+
+      this.draw = () => {
+        var p1 = canvas.height - noise(t + this.x) * 0.25;
+        if (p1 - 15 > this.y) {
+          this.ySpeed -= 0.1;
+        } else {
+          this.y = p1;
+          this.ySpeed = 0;
+        }
+        this.y -= this.ySpeed;
+
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.drawImage(this.img, -15, -15, 30, 30);
+
+        ctx.restore();
+      };
+    }
+
+    this.on('show', () => {
+      this.loop();
+      this.refs.body.appendChild(canvas);
+    });
+
+    var t = 0;
+
+    this.loop = () => {
+      //- t++ となることでアニメーションぽく描画
+      t += 1;
+      ctx.fillStyle = '#19f';
+      //- (左上からのX座標, 左上からのy座標, 幅, 高さ)
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      //- 山を描画
+      ctx.fillStyle = "black";
+      //- まず宣言
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+      for (var i = 0; i < canvas.width; i++) {
+        ctx.lineTo(i, canvas.height - noise(t + i) * 0.25);
+      }
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.fill();
+
+      this.player.draw();
+
+      //- ループ処理
+      window.requestAnimationFrame(this.loop);
+    };
