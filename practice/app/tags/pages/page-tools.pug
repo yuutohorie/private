@@ -1,0 +1,38 @@
+page-tools
+  //- ヘッダー
+  div.h10per.sticky.t0.l0.f.fh.h10per.z1.bg-white
+    module-header.w-full(title='TOOLS', back='{true}')
+  //- ヒーロー
+  div.h30per
+    img.s-full.object-fit-cover(src="/static/images/tools/hero/tools_hero.jpg")
+  //- コンテンツ
+  div.flex.flex-column.h90per
+    div.h-full.overflow-scroll(ref='body')
+      div.container.p30
+        a.games.f.flex-column.fh.py10(each='{item in games}', href='{item.link}')
+          div.fs18 {item.title}
+
+  script.
+
+    this.games = [
+      {
+        title: 'hoge',
+        link: "#",
+      },
+      {
+        title: 'hoge',
+        link: "#",
+      },
+      {
+        title: 'hoge',
+        link: "#",
+      },
+      {
+        title: 'hoge',
+        link: "#",
+      },
+      {
+        title: 'hoge',
+        link: "#",
+      },
+    ];
